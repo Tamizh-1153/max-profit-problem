@@ -1,55 +1,67 @@
-let arr = [0, 0, 0]
-let timeUnit = [4, 5, 10]
+function rearrangeArraysDescending(time, earning,toConstruct) {
+  const earningPerUnitTime = calculateEarningsPerUnitTime(time, earning)
 
+  const combinedArray = time.map((t, index) => ({
+    time: t,
+    earning: earning[index],
+    earningPerUnitTime: earningPerUnitTime[index],
+    toConstruct: toConstruct[index],
+  }))
+
+  combinedArray.sort((a, b) => b.earningPerUnitTime - a.earningPerUnitTime)
+
+  const rearrangedTime = combinedArray.map((item) => item.time)
+  const rearrangedEarning = combinedArray.map((item) => item.earning)
+  const rearrangedBuildings = combinedArray.map((item) => item.toConstruct)
+
+  return { rearrangedTime, rearrangedEarning,rearrangedBuildings }
+}
+
+function calculateEarningsPerUnitTime(time, earning) {
+  const earningPerUnitTime = time.map((t, index) => earning[index] / t)
+  return earningPerUnitTime
+}
+
+
+let constructedBuildings = [0, 0, 0]
 function find(n) {
-  let pr = 0
-  let prof = [0, 0, 0]
+  let profit = 0
+  let currentIndex
 
-  if (n < 4) {
+  if (n < Math.min(...rearrangedTime)) {
     return 0
-  } else {
-    let temp = n - 4
-    prof[0] = temp * 1000
-
-    if (n >= 5) {
-      temp = n - 5
-      prof[1] = temp * 1500
-
-      if (n >= 10) {
-        temp = n - 10
-        prof[2] = temp * 3000
-      }
-    }
+  } else if (n > rearrangedTime[0]) {
+    let temp = n - rearrangedTime[0]
+    profit += temp * rearrangedEarning[0]
+    currentIndex = 0
+    constructedBuildings[0]++
+  } else if (n > rearrangedTime[1]) {
+    let temp = n - rearrangedTime[1]
+    profit += temp * rearrangedEarning[1]
+    currentIndex = 1
+    constructedBuildings[1]++
+  }else {
+    let temp = n - rearrangedTime[2]
+    profit += temp * rearrangedEarning[2]
+    currentIndex = 2
+    constructedBuildings[2]++
   }
 
-  let maxIndex = getMax(prof)
-  pr += prof[maxIndex]
-  arr[maxIndex]++
-  return pr + find(n - timeUnit[maxIndex])
+  return profit + find(n-rearrangedTime[currentIndex])
 }
 
-function getMax(prof) {
-  if (prof[0] >= prof[1]) {
-    if (prof[0] >= prof[2]) {
-      return 0
-    } else {
-      return 2
-    }
-  } else if (prof[1] >= prof[2]) {
-    return 1
-  } else {
-    return 2
-  }
-}
+// Input here
+const n = 30
+const time = [4, 5, 10]
+const earning = [1000, 1500, 3000]
+const toConstruct = ["Pub", "Theatre", "Commercial Park"]
 
-function solString() {
-  return `T: ${arr[1]}, P: ${arr[0]}, C: ${arr[2]}`
-}
+let { rearrangedTime, rearrangedEarning, rearrangedBuildings } =
+  rearrangeArraysDescending(time, earning, toConstruct)
 
-// Give the input here
-let n = 13
-console.log("Earnings: $" + find(parseInt(n)))
-console.log("Solution:\n" + solString())
-
-
-
+console.log(`Earnings - ${find(n)}`)
+console.log(
+  rearrangedBuildings
+    .map((item, index) => `${item} - ${constructedBuildings[index]}`)
+    .join(", ")
+)
