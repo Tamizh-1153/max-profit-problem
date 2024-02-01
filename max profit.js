@@ -24,7 +24,7 @@ function calculateEarningsPerUnitTime(time, earning) {
 
 
 let constructedBuildings = [0, 0, 0]
-function find(n) {
+function maxProfit(n) {
   let profit = 0
   let currentIndex
 
@@ -47,11 +47,11 @@ function find(n) {
     constructedBuildings[2]++
   }
 
-  return profit + find(n-rearrangedTime[currentIndex])
+  return profit + maxProfit(n-rearrangedTime[currentIndex])
 }
 
-// Input here
-const n = 30
+// Input here. You can also change n,time array, earning array to get Max profit 
+const n = 20
 const time = [4, 5, 10]
 const earning = [1000, 1500, 3000]
 const toConstruct = ["Pub", "Theatre", "Commercial Park"]
@@ -59,7 +59,7 @@ const toConstruct = ["Pub", "Theatre", "Commercial Park"]
 let { rearrangedTime, rearrangedEarning, rearrangedBuildings } =
   rearrangeArraysDescending(time, earning, toConstruct)
 
-console.log(`Earnings - ${find(n)}`)
+console.log(`Earnings - $${maxProfit(n)}`)
 console.log(
   rearrangedBuildings
     .map((item, index) => `${item} - ${constructedBuildings[index]}`)
